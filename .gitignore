@@ -1,0 +1,7 @@
+*sdf
+*opendb
+Debug
+Release
+x64
+.vs
+*.db
