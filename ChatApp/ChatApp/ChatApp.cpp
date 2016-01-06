@@ -7,14 +7,33 @@
 #include "sqlite3.h"
 #include <ios>
 
+#include "DbConnection.h"
+
 using namespace std;
 
 
 int main()
 {
-	int rc;
-	char *error;
 
+	DbConnection connection("MyDb.db");
+	connection.connect();
+	auto resultSet  = connection.executeQuery("SELECT * FROM MyTable;");
+	for (auto& rows : resultSet) 
+	{
+		cout << rows.first.c_str() << ": ";
+		for (unsigned int j = 0; j < rows.second.size(); j++)
+		{
+			cout << rows.second[j].c_str() << " ";
+		}
+		cout << endl;
+	}
+	connection.end();
+	cin.get();
+	return 0;
+
+		/*
+		int rc;
+		char *error;
 	cout << "Opening MyDb.db ..." << endl;
 	sqlite3 *db;
 	rc = sqlite3_open("MyDb.db", &db);
@@ -69,6 +88,19 @@ int main()
 	}
 	else
 	{
+
+		for (int i = 0; i < columns; i++)
+		{
+			
+			for (int j = 0; j < rows; j++)
+			{
+				int cellPosition = (j * columns) + i;
+				int a = cellPosition;
+				
+			}
+		}
+
+
 		// Display Table
 		for (int rowCtr = 0; rowCtr <= rows; ++rowCtr)
 		{
@@ -109,7 +141,7 @@ int main()
 	// Wait For User To Close Program
 	cout << "Please press any key to exit the program ..." << endl;
 	cin.get();
-	return 0;
+	return 0;*/
 }
 
 
