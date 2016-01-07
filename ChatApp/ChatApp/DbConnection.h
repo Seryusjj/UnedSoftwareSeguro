@@ -3,6 +3,7 @@
 #include "sqlite3.h"
 #include <vector>
 #include <map>
+#include <exception>
 
 class DbConnection
 {
@@ -11,6 +12,17 @@ private:
 	char* error;
 	int rc;
 	std::string dbName;
+
+	void throwSQLiteException(int excep)
+	{
+		if (excep)
+		{
+			std::exception excepcionToThrow = std::exception(sqlite3_errmsg(db));
+			sqlite3_free(error);
+			throw  excepcionToThrow;
+		}
+	}
+
 public:
 	DbConnection(const std::string name) 
 	{
@@ -24,6 +36,7 @@ public:
 	void connect() 
 	{
 		rc = sqlite3_open(dbName.c_str(), &db);
+		throwSQLiteException(rc);
 	}
 
 	void end() 
@@ -38,6 +51,7 @@ public:
 		char ** results = NULL;
 		int rows, columns;
 		rc = sqlite3_get_table(db, query.c_str(), &results, &rows, &columns, &error);
+		throwSQLiteException(rc);
 
 		for (int i = 0; i < columns; i++)
 		{
@@ -55,18 +69,29 @@ public:
 		}
 		sqlite3_free_table(results);
 		return resultset;
-
 	}
 
 	void createInsertOrUpdate(std::string query)
 	{
 		rc = sqlite3_exec(db, query.c_str(), NULL, NULL, &error);
-		if (rc) 
+		throwSQLiteException(rc);
+	}
+
+	void printTable(std::map<std::string, std::vector<std::string>> resultSet)
+	{
+		for (auto& rows : resultSet)
 		{
-			std::cerr << "Error executing SQLite3 statement: " << sqlite3_errmsg(db) << std::endl << std::endl;
-			sqlite3_free(error);
+			std::cout << rows.first.c_str() << ": ";
+			for (unsigned int j = 0; j < rows.second.size(); j++)
+			{
+				std::cout << rows.second[j].c_str() << " ";
+			}
+			std::cout << std::endl;
 		}
 	}
+
+
+
 
 };
 
