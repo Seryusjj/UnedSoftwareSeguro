@@ -1,9 +1,11 @@
 #pragma once
 #include <iostream>
+#include <algorithm>
 #include "sqlite3.h"
 #include <vector>
 #include <map>
 #include <exception>
+#include <ios>
 
 class DbConnection
 {
@@ -63,7 +65,6 @@ public:
 				{
 					rowResults.push_back(results[cellPosition]);
 				}
-				
 			}
 			resultset[results[i]] = rowResults;
 		}
@@ -79,18 +80,47 @@ public:
 
 	void printTable(std::map<std::string, std::vector<std::string>> resultSet)
 	{
-		for (auto& rows : resultSet)
+		char* placeholder = "‹‹‹‹‹‹‹‹‹‹‹‹‹";
+		int placeholderLength = strlen(placeholder);
+		std::vector<std::string> keys;
+		int numCol = 0;
+		//print headers
+		for (auto& colums : resultSet)
 		{
-			std::cout << rows.first.c_str() << ": ";
-			for (unsigned int j = 0; j < rows.second.size(); j++)
+			keys.push_back(colums.first);
+			numCol++;
+			std::string header(colums.first);
+			std::transform(header.begin(), header.end(), header.begin(), toupper);
+			std::cout.width(placeholderLength);
+			std::cout.setf(std::ios::left);
+			std::cout << header.c_str() << " ";
+		}
+		std::cout << std::endl;
+		int numRows = resultSet[keys[0]].size();
+		//print placeholder
+		for (int i = 0; i < numCol; i++) 
+		{
+			std::cout.width(placeholderLength);
+			std::cout.setf(std::ios::left);
+			std::cout << placeholder;
+		}
+		std::cout << std::endl;
+		//print row data
+		for (int i = 0; i < numRows; i++)
+		{
+			for (int j = 0; j < numCol;j++)
 			{
-				std::cout << rows.second[j].c_str() << " ";
+				int internelLength = j < numCol - 1 ? placeholderLength - 1: placeholderLength;
+				std::cout.width(internelLength);
+				std::cout.setf(std::ios::left);
+				std::cout << resultSet[keys[j]][i].c_str();
+				if (j < numCol - 1) std::cout << "€ ";
+
 			}
 			std::cout << std::endl;
 		}
+		std::cout << std::endl;
 	}
-
-
 
 
 };

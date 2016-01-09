@@ -38,7 +38,7 @@ void insertData()
 int main()
 {
 	createTables();
-	insertData();
+	//insertData();
 	try
 	{
 		connection.connect();
