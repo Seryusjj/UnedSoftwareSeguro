@@ -58,7 +58,7 @@ public:
 		for (int i = 0; i < columns; i++)
 		{
 			std::vector<std::string> rowResults;
-			for (int j = 0; j < rows ; j++)
+			for (int j = 0; j <= rows ; j++)
 			{
 				int cellPosition = (j * columns) + i;
 				if (cellPosition >= columns) 
@@ -69,6 +69,7 @@ public:
 			resultset[results[i]] = rowResults;
 		}
 		sqlite3_free_table(results);
+		
 		return resultset;
 	}
 
@@ -78,7 +79,7 @@ public:
 		throwSQLiteException(rc);
 	}
 
-	void printTable(std::map<std::string, std::vector<std::string>> resultSet)
+	void printTable( std::map<std::string, std::vector<std::string>> & const resultSet )
 	{
 		char* placeholder = "‹‹‹‹‹‹‹‹‹‹‹‹‹";
 		int placeholderLength = strlen(placeholder);
@@ -93,6 +94,7 @@ public:
 			std::transform(header.begin(), header.end(), header.begin(), toupper);
 			std::cout.width(placeholderLength);
 			std::cout.setf(std::ios::left);
+			
 			std::cout << header.c_str() << " ";
 		}
 		std::cout << std::endl;

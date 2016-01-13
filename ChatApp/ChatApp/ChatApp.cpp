@@ -12,11 +12,11 @@ void createTables()
 	try
 	{
 		connection.connect();
-		connection.createInsertOrUpdate("CREATE TABLE MyTable (id INTEGER PRIMARY KEY, value STRING);");
+		connection.createInsertOrUpdate("CREATE TABLE users (username STRING PRIMARY KEY, pass STRING);");
 	}
 	catch (exception &e)
 	{
-		cout << e.what() << endl;
+		//cout << e.what() << endl;
 	}
 	connection.end();
 }
@@ -26,23 +26,39 @@ void insertData()
 	try
 	{
 		connection.connect();
-		connection.createInsertOrUpdate("INSERT INTO MyTable VALUES(NULL, 'A Value');");
+		connection.createInsertOrUpdate("INSERT INTO users VALUES('sergio1', 'sergio1234');");
+		connection.createInsertOrUpdate("INSERT INTO users VALUES('maria', 'maria1234');");
+		connection.createInsertOrUpdate("INSERT INTO users VALUES('manolo', 'manuel1234');");
+		connection.createInsertOrUpdate("INSERT INTO users VALUES('sergio', 'sergio1234');");
 	}
 	catch (exception &e)
 	{
-		cout << e.what() << endl;
+		//cout << e.what() << endl;
 	}
 	connection.end();
 }
 
+
+
 int main()
 {
 	createTables();
-	//insertData();
+	insertData();
 	try
 	{
 		connection.connect();
-		auto resultSet = connection.executeQuery("SELECT * FROM MyTable;");
+		char pass[15];
+		char username[15];
+
+		std::cout << "Enter your username: ";
+		std::cin >> username;
+		std::cout << "Enter your password: ";
+		std::cin >> pass;
+
+
+		std::string query = "SELECT * FROM users WHERE pass='" + std::string(pass) + "' and username = '"+std::string(username)+"';";
+		
+		auto resultSet = connection.executeQuery(query);
 		connection.printTable(resultSet);
 	}
 	catch (exception &e)
@@ -50,7 +66,9 @@ int main()
 		cout << e.what() << endl;
 	}
 	connection.end();
-	cin.get();
+	std::cout << "Press a key to exit program" << std::endl;
+	std::cin.get();
+	std::cin.get();
 	return 0;
 }
 
