@@ -10,7 +10,6 @@
 class DbConnection
 {
 private:
-	sqlite3 *db;
 	char* error;
 	int rc;
 	std::string dbName;
@@ -26,6 +25,8 @@ private:
 	}
 
 public:
+	sqlite3 *db;
+
 	DbConnection(const std::string name) 
 	{
 		dbName = name;
