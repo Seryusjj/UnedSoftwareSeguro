@@ -1,0 +1,4 @@
+To clone the project 
+git clone --recursive https://github.com/Seryusjj/UnedSoftwareSeguro
+Then go to build folder and call cmake ..
+in order to generate in such folder the makefiles or visual studio solution and build the project
