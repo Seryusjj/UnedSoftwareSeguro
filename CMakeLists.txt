@@ -21,7 +21,7 @@ add_subdirectory(externalLibs)
 add_subdirectory(test)
 
 
-
+set(BUILD_SHARED_LIBS ON CAHE BOLL "Desc")
 #required for google test
 if (NOT BUILD_SHARED_LIBS)
 	MESSAGE (FATAL_ERROR "Enable BUILD_SHARED_LIBS")
