@@ -9,7 +9,7 @@ find_package(Threads REQUIRED)
 
 #global confiurations, 
 #set all orjects runtime binaries in the same path to avoid dealing with dll
-
+SET (CMAKE_C_FLAGS "-Wall -g")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 #add directories

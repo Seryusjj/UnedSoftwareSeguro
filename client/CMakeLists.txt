@@ -1,7 +1,4 @@
 #client cmakelists
-set (CMAKE_C_FLAGS "-Wall -g")
-set (ENABLE_EXPORTS "true")
-
 file(GLOB SRCS *.cpp *h)
 
 add_executable(client ${SRCS})
