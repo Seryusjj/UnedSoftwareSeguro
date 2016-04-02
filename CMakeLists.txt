@@ -20,9 +20,9 @@ add_subdirectory(server)
 add_subdirectory(externalLibs)
 add_subdirectory(test)
 
-
-set(BUILD_SHARED_LIBS ON CAHE BOLL "Desc")
 #required for google test
+set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
+#message shuold not be dsiplay
 if (NOT BUILD_SHARED_LIBS)
 	MESSAGE (FATAL_ERROR "Enable BUILD_SHARED_LIBS")
 endif()
