@@ -1,7 +1,8 @@
 #ifndef __USER_H__
 #define __USER_H__
+#include "DLLDefines.h"
 
-class User
+class EXPORT User
 {
 private:
 

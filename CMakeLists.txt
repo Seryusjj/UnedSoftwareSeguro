@@ -10,9 +10,9 @@ find_package(Threads REQUIRED)
 find_package(SQLConector)
 find_package(Boost 1.60.0 REQUIRED)
 
-if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0002 NEW)
-endif(COMMAND cmake_policy)
+#if(COMMAND cmake_policy)
+#  cmake_policy(SET CMP0002 NEW)
+#endif(COMMAND cmake_policy)
 
 
 #global confiurations, 
@@ -28,11 +28,10 @@ add_subdirectory(client)
 add_subdirectory(server)
 add_subdirectory(test)
 
-#required for google test
-set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
-#message shuold not be dsiplay
+#required for .dll or .so compilation
 if (NOT BUILD_SHARED_LIBS)
-	MESSAGE (FATAL_ERROR "Enable BUILD_SHARED_LIBS")
+	set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
+	MESSAGE (FATAL_ERROR "Enable BUILD_SHARED_LIBS Required, I'll do it for u, try configure again")
 endif()
 
 
