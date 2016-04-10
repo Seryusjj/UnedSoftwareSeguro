@@ -1,11 +1,18 @@
-#server cmakelists
+#Server cmakelists
 file(GLOB SRCS *.cpp *h)
 
-add_executable(server ${SRCS})
+add_executable(Server ${SRCS})
+
 #include the src dir of the lib in order to keep a cleaner code
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../common)
-target_link_libraries(server libCommon)
+target_link_libraries(Server LibCommon)
 
-#this allow the test project to use this as a kind of lib
-SET_TARGET_PROPERTIES(server PROPERTIES
-    ENABLE_EXPORTS TRUE)
+
+#linq sqlconnector
+include_directories(${MYSQL_CONNECTOR_INCLUDE_DIR})
+target_link_libraries(Server ${MYSQL_CONNECTOR_LIBRARY})
+
+		
+#linq boost for mysqlcppconn, only nedd headers 
+include_directories(${Boost_INCLUDE_DIR})
+

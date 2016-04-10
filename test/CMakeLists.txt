@@ -1,17 +1,15 @@
-#tests cmakelists
+#Tests cmakelists
 file(GLOB SRCS *.cpp *h)
 
-add_executable(TESTS ${SRCS})
+add_executable(Tests ${SRCS})
 
-
-
-#include libCommon
+#include LibCommon
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../common)
-target_link_libraries(TESTS libCommon)
-
+target_link_libraries(Tests LibCommon)
 
 #include google test
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../externalLibs/googletest/include)
-target_link_libraries(TESTS gtest)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../externals/googletest/include)
+target_link_libraries(Tests gtest)
+
 
                
