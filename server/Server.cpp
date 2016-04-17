@@ -11,6 +11,8 @@ using namespace std;
 
 int main(void)
 {
+	User usr;
+
 	cout << endl;
 	cout << "Running 'SELECT 'Hello World!' » AS _message'..." << endl;
 
