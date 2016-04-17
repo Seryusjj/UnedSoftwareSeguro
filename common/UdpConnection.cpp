@@ -83,7 +83,7 @@ void UdpConnection::configSocket(const int port) {
 }
 
 bool UdpConnection::sendData(const char* data) {
-	int sended = sendto(_udpSocket, data, BUFFER_SIZE, 0, (struct sockaddr *)&_client, _clientLength);
+	int sended = sendto(_udpSocket, data, MAX_BUFFER_SIZE, 0, (struct sockaddr *)&_client, _clientLength);
 	if (sended <= 0) {
 		//error sending data
 		closeSocket();
@@ -94,7 +94,7 @@ bool UdpConnection::sendData(const char* data) {
 
 bool UdpConnection::receiveData(char* buffer) {
 #if _WIN32
-	if (recvfrom(_udpSocket, buffer, BUFFER_SIZE, 0, (struct sockaddr *)&_client, &_clientLength) <= 0)
+	if (recvfrom(_udpSocket, buffer, MAX_BUFFER_SIZE, 0, (struct sockaddr *)&_client, &_clientLength) <= 0)
 	{
 		//error receiving data
 		closeSocket();

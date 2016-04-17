@@ -27,7 +27,7 @@ public:
 template<> size_t SerializablePOD<char*>::serializeSize(char* str)
 {
 	if (str == NULL) return 0;
-	size_t result = strlen(str) + 1;
+	size_t result = strlen(str) + 1;//add 1 to copy the \0 termination
 	result += sizeof(size_t);
 	return result;
 }

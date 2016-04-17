@@ -1,8 +1,9 @@
 #pragma once
-class EXPORT  ISerializable //interface
+class ISerializable //interface
 {
 public:
-	virtual ~ISerializable() {}
+
+	//return the total size of the serialized object
 	virtual size_t serializeSize() const = 0;
 
 	//return the char* corresponding to the serialized data of the calling object

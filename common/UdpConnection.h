@@ -8,8 +8,8 @@
 #include <netinet/in.h>
 #endif
 
-//IPv4 maximum reassembly buffer size is 576
-#define BUFFER_SIZE 570
+//IPv4 maximum reassembly buffer size is 576, IPv6 raises this to 1,500
+#define MAX_BUFFER_SIZE 576
 
 class UdpConnection
 {
