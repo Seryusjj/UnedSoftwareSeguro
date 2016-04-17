@@ -1,14 +1,15 @@
 #
-# Find the MySQL COnnecotr cpp 1.1.7
+# Find the MySQL Connector cpp 1.1.7
 #
 
 # This module defines
 # MYSQL_CONNECTOR_INCLUDE_DIR, where to find mysql_connection.h
 # MYSQL_CONNECTOR_LIBRARIES, the libraries to link against to connect to MySQL Connector
-# MYSQL_CONNECTOR_FOUND, if false, you cannot build anything that requires MySQL.
+# MYSQL_CONNECTOR_FOUND, if false, you cannot build anything that requires MySQL Connector.
 
-# also defined, but not for general use are
-# MYSQL_LIBRARY, where to find the MySQL library.
+# also defined
+# MYSQL_CONNECTOR_LIBRARY, where to find the MySQLConnector library.
+# MYSQL_CONNECTOR_SHARED_LIBRARY, where is the shared lib related to MYSQL_CONNECTOR_LIBRARY
 
 set(MYSQL_CONNECTOR_FOUND 0)
 
@@ -40,13 +41,17 @@ if( WIN32 )
 	#find lib dir
 	find_library(MYSQL_CONNECTOR_LIBRARY
 	NAMES
-	  mysqlcppconn.lib
+	  mysqlcppconn
 	PATHS
 	  ${MYSQL_CONNECTOR_ADD_LIBRARIES_PATH}
 	   "${PROGRAM_FILES_64}/MySQL/MySQL Connector C++ 1.1.7/lib/opt"
 	   "${PROGRAM_FILES_32}/MySQL/MySQL Connector C++ 1.1.7/lib/opt"
 	DOC "Specify the location of the mysqlcppconn.lib library here."
 	)
+	
+	
+	STRING(REPLACE ".lib" ".dll" MYSQL_CONNECTOR_SHARED_LIBRARY ${MYSQL_CONNECTOR_LIBRARY})
+	
 endif( WIN32 )
 
 

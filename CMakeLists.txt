@@ -19,7 +19,8 @@ find_package(Boost 1.60.0 REQUIRED)
 #set all orjects runtime binaries in the same path to avoid dealing with dll
 SET (CMAKE_C_FLAGS "-Wall -g")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
+set(BUILD_STATIC_LIBS OFF CACHE BOOL "Set to ON to build static libraries" FORCE)
+set(BUILD_SHARED_LIBS ON CACHE BOOL "Set to ON to build DSO libraries" FORCE)
 #add directories
 
 add_subdirectory(externals)
@@ -30,7 +31,7 @@ add_subdirectory(test)
 
 #required for .dll or .so compilation
 if (NOT BUILD_SHARED_LIBS)
-	set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
+
 	MESSAGE (FATAL_ERROR "Enable BUILD_SHARED_LIBS Required, I'll do it for u, try configure again")
 endif()
 
