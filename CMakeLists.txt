@@ -31,7 +31,6 @@ add_subdirectory(test)
 
 #required for .dll or .so compilation
 if (NOT BUILD_SHARED_LIBS)
-
 	MESSAGE (FATAL_ERROR "Enable BUILD_SHARED_LIBS Required, I'll do it for u, try configure again")
 endif()
 
