@@ -6,9 +6,14 @@
 class EXPORT User : public ISerializable
 {
 private:
+	char * _message;
 
 public:
-	virtual size_t serializeSize() const override;
+	//For position we use floats since are the smallest floating point type (in all platforms)
+	//double could be as big as float or bigger we do not know so just use float
+	float X, Y, Z;
+
+	virtual int32_t serializeSize() const override;
 
 	//get an ISerializable* and return the char*
 	virtual char*  serialize()  override;
@@ -16,10 +21,10 @@ public:
 	//get the data char* and return a ISerializable*
 	virtual void deserialize(const char* dataToDeserialize) override;
 
-	int posX;
-	int posY;
-	int posZ;
-	char* message;
+	void setMessage(char * newMessage);
+
+	//not allow to modify the returned message, if wanna modify, use setMessage
+	const char * getMessage() const { return _message; };
 
 	User();
 	~User();

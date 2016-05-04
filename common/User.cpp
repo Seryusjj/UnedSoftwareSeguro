@@ -1,42 +1,64 @@
 #include "User.h"
 #include "SerializablePOD.h"
+#include <string>
 
 User::User()
 {
-	posX = 0;
-	posY = 0;
-	posZ = 0;
-	message = "";
+	X = Y = Z = 0.0f;
+	_message = new char[1]{ "" };
 }
 
 User::~User()
 {
+	delete[] _message;
 }
 
-size_t User::serializeSize() const
+int32_t User::serializeSize() const
 {
-	size_t totalSize = SerializablePOD<int>::serializeSize(posX);
-	totalSize += SerializablePOD<int>::serializeSize(posY);
-	totalSize += SerializablePOD<int>::serializeSize(posZ);
-	totalSize += SerializablePOD<char*>::serializeSize(message);
+	int32_t totalSize = SerializablePOD<float>::serializeSize(X);
+	totalSize += SerializablePOD<float>::serializeSize(Y);
+	totalSize += SerializablePOD<float>::serializeSize(Z);
+	totalSize += SerializablePOD<char*>::serializeSize(_message);
 	return totalSize;
 }
 
 char* User::serialize()
 {
-	size_t dataLength = serializeSize();
+	int32_t dataLength = serializeSize();
 	char * dataBuffer = new char[dataLength];
-	dataBuffer = SerializablePOD<int>::serialize(dataBuffer, posX);
-	dataBuffer = SerializablePOD<int>::serialize(dataBuffer, posY);
-	dataBuffer = SerializablePOD<int>::serialize(dataBuffer, posZ);
-	dataBuffer = SerializablePOD<char*>::serialize(dataBuffer, message);
+	dataBuffer = SerializablePOD<float>::serialize(dataBuffer, X);
+	dataBuffer = SerializablePOD<float>::serialize(dataBuffer, Y);
+	dataBuffer = SerializablePOD<float>::serialize(dataBuffer, Z);
+	//if the message is "" i'm loosing 4+1 bytes for dummy data
+	//may be the messages should go in another channel
+	dataBuffer = SerializablePOD<char*>::serialize(dataBuffer, _message);
 	return dataBuffer - dataLength;
 }
 
 void User::deserialize(const char* dataToDeserialize)
 {
-	dataToDeserialize = SerializablePOD<int>::deserialize(dataToDeserialize, posX);
-	dataToDeserialize = SerializablePOD<int>::deserialize(dataToDeserialize, posY);
-	dataToDeserialize = SerializablePOD<int>::deserialize(dataToDeserialize, posZ);
-	dataToDeserialize = SerializablePOD<char*>::deserialize(dataToDeserialize, message);
+	dataToDeserialize = SerializablePOD<float>::deserialize(dataToDeserialize, X);
+	dataToDeserialize = SerializablePOD<float>::deserialize(dataToDeserialize, Y);
+	dataToDeserialize = SerializablePOD<float>::deserialize(dataToDeserialize, Z);
+	dataToDeserialize = SerializablePOD<char*>::deserialize(dataToDeserialize, _message);
+}
+
+void inline User::setMessage(char * newMessage)
+{
+	if (newMessage == NULL)
+	{
+		delete[] _message;
+		_message = new char[1]{ "" };
+	}
+	else
+	{
+		int size = strlen(newMessage) + 1;
+		if (size > 140)
+		{
+			throw new std::exception("Mesage is longer than 139 characters");
+		}
+		delete[] _message;
+		_message = new char[size];
+		strcpy(_message, newMessage);
+	}
 }

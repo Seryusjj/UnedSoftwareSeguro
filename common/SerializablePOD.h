@@ -6,7 +6,7 @@
 template <typename T> class SerializablePOD
 {
 public:
-	static size_t serializeSize(T str)
+	static int32_t serializeSize(T str)
 	{
 		return sizeof(T);
 	}
@@ -24,33 +24,34 @@ public:
 	}
 };
 
-template<> size_t SerializablePOD<char*>::serializeSize(char* str)
+template<> int32_t SerializablePOD<char*>::serializeSize(char* str)
 {
 	if (str == NULL) return 0;
-	size_t result = strlen(str) + 1;//add 1 to copy the \0 termination
-	result += sizeof(size_t);
+	int32_t result = strlen(str) + 1;//add 1 to copy the \0 termination
+	result += sizeof(int32_t);
 	return result;
 }
 
 template<> char* SerializablePOD<char*>::serialize(char* target, char* value)
 {
 	//serialize the string size
-	size_t lenght = strlen(value) + 1;;
+	int32_t lenght = strlen(value) + 1;;
 
-	memcpy(target, &lenght, sizeof(size_t));
+	memcpy(target, &lenght, sizeof(int32_t));
 	//serialize the string
-	memcpy(target + sizeof(size_t), value, lenght);
-	return target + lenght + sizeof(size_t);
+	memcpy(target + sizeof(int32_t), value, lenght);
+	return target + lenght + sizeof(int32_t);
 }
 
 template<> const char* SerializablePOD<char*>::deserialize(const char* source, char*& target)
 {
-	size_t length;
+	int32_t length;
 	//deserialize the string size
-	memcpy(&length, source, sizeof(size_t));
+	memcpy(&length, source, sizeof(int32_t));
 	//deserialize the string
+	//target = new char[length];
+	delete[] target;
 	target = new char[length];
-	memcpy(target, source + sizeof(size_t), length);
-
-	return source + sizeof(size_t) + length;
+	memcpy(target, source + sizeof(int32_t), length);
+	return source + sizeof(int32_t) + length;
 }

@@ -1,16 +1,8 @@
 #pragma once
 #include "DLLDefines.h"
 #include <string>
+#include <fstream>
 #include <map>
-
-class EXPORT FileReadException : public std::exception
-{
-public:
-	virtual const char* what() const throw()
-	{
-		return "Error reading config file, may be the path or filename are wrong";
-	}
-};
 
 class EXPORT ConfigurationManager
 {
@@ -22,12 +14,23 @@ public:
 	}
 private:
 	ConfigurationManager() {};
-	FileReadException  fileReadException;
+	std::map<std::string, std::string> _properties;
 
 public:
-
 	ConfigurationManager(ConfigurationManager const&) = delete;
 	void operator=(ConfigurationManager const&) = delete;
 
-	std::map<std::string, std::string> ReadConfigFile(std::string const& filename);
+	template<typename T>
+	inline T getValueOfPropertie(std::string key);
+
+	void loadDataOfFile(std::string const& filename);
 };
+
+template<typename T>
+inline T ConfigurationManager::getValueOfPropertie(std::string key)
+{
+	std::stringstream ss(_properties[key]);
+	T value;
+	ss >> value;
+	return value;
+}

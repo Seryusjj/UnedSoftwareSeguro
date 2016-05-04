@@ -1,6 +1,4 @@
 #include "ConfigurationManager.h"
-#include <fstream>
-#include <exception>
 
 std::string trim(std::string const& source, char const* delims = " \t\r\n") {
 	std::string result(source);
@@ -16,15 +14,14 @@ std::string trim(std::string const& source, char const* delims = " \t\r\n") {
 	return result;
 }
 
-std::map<std::string, std::string> ConfigurationManager::ReadConfigFile(std::string const& configFile)
+void ConfigurationManager::loadDataOfFile(std::string const& configFile)
 {
 	std::ifstream file(configFile.c_str());
 	bool fail = file.fail();
 	if (fail) {
-		throw fileReadException;
+		throw std::exception("Error reading config file, may be the path or filename are wrong");
 	}
-
-	std::map<std::string, std::string> _content;
+	_properties.clear();
 	std::string line;
 	std::string name;
 	std::string value;
@@ -39,7 +36,6 @@ std::map<std::string, std::string> ConfigurationManager::ReadConfigFile(std::str
 		name = trim(line.substr(0, posEqual));
 		value = trim(line.substr(posEqual + 1));
 
-		_content[name] = value;
+		_properties[name] = value;
 	}
-	return _content;
 }
