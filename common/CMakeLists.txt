@@ -1,5 +1,6 @@
 #LibCommon cmakelists
 file(GLOB SRCS *.cpp *h)
+
 #this lib is not really use never (temporally needed)
 add_library(LibCommon SHARED ${SRCS} )
 #add_library(LibCommon STATIC ${SRCS})

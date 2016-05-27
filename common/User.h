@@ -13,12 +13,13 @@ public:
 	//double could be as big as float or bigger we do not know so just use float
 	float X, Y, Z;
 
+	/*get the size of the object when serialized*/
 	virtual int32_t serializeSize() const override;
 
-	//get an ISerializable* and return the char*
+	//get the data char* of the current object
 	virtual char*  serialize()  override;
 
-	//get the data char* and return a ISerializable*
+	//get the data char* and fill the current object with its data
 	virtual void deserialize(const char* dataToDeserialize) override;
 
 	void setMessage(char * newMessage);

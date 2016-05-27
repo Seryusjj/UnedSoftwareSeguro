@@ -1,8 +1,6 @@
 #include "gtest/gtest.h"
 #include "User.h"
-#include "NetworkConnection.h"
-#include "ClientConnection.h"
-#include "ServerConnection.h"
+#include "NetworkingFactory.h"
 
 /*Shared res*/
 
@@ -27,11 +25,11 @@ protected:
 	virtual void SetUp()
 	{
 		/*new server with port to listne on*/
-		server = new ServerConnection(4000);
+		server = NetworkingFactory::CreateServerConnection(4000);
 		server->open();
 		//new client with server info
-		client = new ClientConnection(4000, "127.0.0.1");
-		auxclient = new ClientConnection(4000, "127.0.0.1");
+		client = NetworkingFactory::CreateClientConnection(4000, "127.0.0.1");
+		auxclient = NetworkingFactory::CreateClientConnection(4000, "127.0.0.1");
 
 		client->open();
 
@@ -111,7 +109,6 @@ TEST_F(NetworkConnectionTest, SendFromSeveralClientsTest)
 
 TEST_F(NetworkConnectionTest, SendFromServerTest)
 {
-	//TODO
 	std::map<int, User*> data;
 	client->sendData(usr->serialize(), usr->serializeSize());
 	//if no data keep reading
@@ -121,7 +118,7 @@ TEST_F(NetworkConnectionTest, SendFromServerTest)
 	}
 	for each (auto values in data)
 	{
-		server->sendTo(values.second->serialize(), values.second->serializeSize(), values.first);
+		server->sendFrom(values.second->serialize(), values.second->serializeSize(), values.first);
 	}
 	data.clear();
 

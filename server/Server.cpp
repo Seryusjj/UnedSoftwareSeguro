@@ -1,56 +1,36 @@
 #include <iostream>
 #include "User.h"
-
-#include "mysql_connection.h"
-#include <cppconn/driver.h>
-#include <cppconn/exception.h>
-#include <cppconn/resultset.h>
-#include <cppconn/statement.h>
+#include "NetworkingFactory.h"
 
 using namespace std;
 
 int main(void)
 {
-	User usr;
-
-	cout << endl;
-	cout << "Running 'SELECT 'Hello World!' » AS _message'..." << endl;
-
-	try {
-		sql::Driver *driver;
-		sql::Connection *con;
-		sql::Statement *stmt;
-		sql::ResultSet *res;
-
-		/* Create a connection */
-		driver = get_driver_instance();
-		con = driver->connect("tcp://127.0.0.1:3306", "root", "89935434");
-		/* Connect to the MySQL test database */
-		con->setSchema("test");
-
-		stmt = con->createStatement();
-		res = stmt->executeQuery("SELECT 'Hello World!' AS _message");
-		while (res->next()) {
-			cout << "\t... MySQL replies: ";
-			/* Access column data by alias or column name */
-			cout << res->getString("_message") << endl;
-			cout << "\t... MySQL says it again: ";
-			/* Access column fata by numeric offset, 1 is the first column */
-			cout << res->getString(1) << endl;
+	ServerConnection* connection = NetworkingFactory::CreateServerConnection(4000);
+	connection->open();
+	while (true)
+	{
+		//leemos datos de todos los usuarios conectados
+		auto result = connection->readAsync<User>();
+		for each (auto pair in result)
+		{
+			//send the user the number of users connected
+			connection->sendIntFrom(result.size(), pair.first);
 		}
-		delete res;
-		delete stmt;
-		delete con;
+		/** If a client does not end precessing data, its not going to send anything that is, is not going to be on the result ***/
+		/** If a user disconnect from server is not going to be on result map anymore but is going to be on clients list so we have to tell**/
+		/** The client withc users are still connected **/
+		//send to each user ther others user data in another thread
+		for each (auto pair in result)
+		{
+			for each (auto pairTwo in result)
+			{
+				//do not send user a it's own data
+				if (pair.first != pairTwo.first)
+					connection->sendFrom(pairTwo.second->serialize(), pairTwo.second->serializeSize(), pair.first);
+			}
+		}
 	}
-	catch (sql::SQLException &e) {
-		cout << "# ERR: SQLException in " << __FILE__;
-		cout << "(" << __FUNCTION__ << ") on line " << __LINE__ << endl;
-		cout << "# ERR: " << e.what();
-		cout << " (MySQL error code: " << e.getErrorCode();
-		cout << ", SQLState: " << e.getSQLState() << " )" << endl;
-	}
-
-	cout << endl;
-
+	connection->close();
 	return EXIT_SUCCESS;
 }

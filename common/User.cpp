@@ -55,7 +55,7 @@ void inline User::setMessage(char * newMessage)
 		int size = strlen(newMessage) + 1;
 		if (size > 140)
 		{
-			throw new std::exception("Mesage is longer than 139 characters");
+			throw new std::exception("Mesage is longer than 140 characters");
 		}
 		delete[] _message;
 		_message = new char[size];
