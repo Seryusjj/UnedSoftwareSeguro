@@ -7,8 +7,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/macros)
 find_package(Threads REQUIRED)
 
 #find_package(MySQL)
-find_package(SQLConector)
-find_package(Boost 1.60.0 REQUIRED)
+#find_package(SQLConector)
+#find_package(Boost 1.60.0 REQUIRED)
 
 #if(COMMAND cmake_policy)
 #  cmake_policy(SET CMP0002 NEW)

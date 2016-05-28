@@ -1,7 +1,8 @@
 #pragma once
 #include "DLLDefines.h"
 #include <string>
-#include <fstream>
+
+#include <sstream>
 #include <map>
 
 class EXPORT ConfigurationManager
@@ -27,8 +28,9 @@ public:
 };
 
 template<typename T>
-inline T ConfigurationManager::getValueOfPropertie(std::string key)
+inline T ConfigurationManager::getValueOfPropertie(const std::string key)
 {
+	if (_properties[key] == "") throw std::exception("Key does not contain value");
 	std::stringstream ss(_properties[key]);
 	T value;
 	ss >> value;

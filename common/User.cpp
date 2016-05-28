@@ -4,6 +4,7 @@
 
 User::User()
 {
+	id = -1;
 	X = Y = Z = 0.0f;
 	_message = new char[1]{ "" };
 }
@@ -19,6 +20,7 @@ int32_t User::serializeSize() const
 	totalSize += SerializablePOD<float>::serializeSize(Y);
 	totalSize += SerializablePOD<float>::serializeSize(Z);
 	totalSize += SerializablePOD<char*>::serializeSize(_message);
+	totalSize += SerializablePOD<int64_t>::serializeSize(id);
 	return totalSize;
 }
 
@@ -32,6 +34,7 @@ char* User::serialize()
 	//if the message is "" i'm loosing 4+1 bytes for dummy data
 	//may be the messages should go in another channel
 	dataBuffer = SerializablePOD<char*>::serialize(dataBuffer, _message);
+	dataBuffer = SerializablePOD<int64_t>::serialize(dataBuffer, id);
 	return dataBuffer - dataLength;
 }
 
@@ -41,6 +44,7 @@ void User::deserialize(const char* dataToDeserialize)
 	dataToDeserialize = SerializablePOD<float>::deserialize(dataToDeserialize, Y);
 	dataToDeserialize = SerializablePOD<float>::deserialize(dataToDeserialize, Z);
 	dataToDeserialize = SerializablePOD<char*>::deserialize(dataToDeserialize, _message);
+	dataToDeserialize = SerializablePOD<int64_t>::deserialize(dataToDeserialize, id);
 }
 
 void inline User::setMessage(char * newMessage)

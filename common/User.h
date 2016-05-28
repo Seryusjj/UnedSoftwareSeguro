@@ -6,6 +6,7 @@
 class EXPORT User : public ISerializable
 {
 private:
+	int64_t id;
 	char * _message;
 
 public:

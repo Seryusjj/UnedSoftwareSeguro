@@ -10,12 +10,12 @@ target_link_libraries(Server LibCommon)
 
 
 #linq sqlconnector
-include_directories(${MYSQL_CONNECTOR_INCLUDE_DIR})
-target_link_libraries(Server ${MYSQL_CONNECTOR_LIBRARY})
+#include_directories(${MYSQL_CONNECTOR_INCLUDE_DIR})
+#target_link_libraries(Server ${MYSQL_CONNECTOR_LIBRARY})
 
 		
 #linq boost for mysqlcppconn, only need headers 
-include_directories(${Boost_INCLUDE_DIR})
+#include_directories(${Boost_INCLUDE_DIR})
 
 
 add_custom_command(TARGET Server POST_BUILD         # Adds a post-build event to Server
