@@ -86,7 +86,7 @@ inline void NetworkConnection::close(int& socket)
 #else
 	if (!socket < 0) {
 		close(socket);
-}
+	}
 #endif
 	socket = -1;
 }
@@ -136,14 +136,14 @@ inline bool NetworkConnection::sendFloatFrom(float data, int socket)
 	return sendFrom(buffer, SerializablePOD<float>::serializeSize(data), socket);
 }
 
-inline bool NetworkConnection::sendIntData(const int32_t data, int len)
+inline bool NetworkConnection::sendIntData(int32_t data)
 {
 	char buffer[MAX_BUFFER_SIZE];
 	SerializablePOD<int32_t>::serialize(buffer, data);
 	return sendData(buffer, SerializablePOD<int32_t>::serializeSize(data));
 }
 
-inline bool NetworkConnection::sendFloatData(const float data, int len)
+inline bool NetworkConnection::sendFloatData(const float data)
 {
 	char buffer[MAX_BUFFER_SIZE];
 	SerializablePOD<float>::serialize(buffer, data);
@@ -154,6 +154,15 @@ inline int32_t  NetworkConnection::readBlockingIntData() {
 	int32_t result = 0;
 	char buffer[MAX_BUFFER_SIZE];
 	int rc = recv(_socket, buffer, MAX_BUFFER_SIZE, 0);
+	SerializablePOD<int32_t>::deserialize(buffer, result);
+	return result;
+}
+
+inline int32_t NetworkConnection::readBlockingIntDataFrom(int socket)
+{
+	int32_t result = 0;
+	char buffer[MAX_BUFFER_SIZE];
+	int rc = recv(socket, buffer, MAX_BUFFER_SIZE, 0);
 	SerializablePOD<int32_t>::deserialize(buffer, result);
 	return result;
 }

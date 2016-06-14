@@ -5,8 +5,7 @@
 #include <vector>
 #include <map>
 #include <exception>
-
-class sqlite3;
+#include "sqlite3.h"
 
 class EXPORT DbConnection
 {
@@ -16,7 +15,15 @@ private:
 	int rc;
 	std::string dbName;
 
-	void throwSQLiteException(int excep);
+	void throwSQLiteException(int excep)
+	{
+		if (excep)
+		{
+			std::exception excepcionToThrow = std::exception(sqlite3_errmsg(db));
+			sqlite3_free(error);
+			throw  excepcionToThrow;
+		}
+	}
 	DbConnection() {}
 public:
 
@@ -34,6 +41,13 @@ public:
 	void close();
 
 	std::map<std::string, std::vector<std::string>> executeQuery(std::string query);
+
+	sqlite3_stmt* createPreparedStatement(std::string query) {
+		sqlite3_stmt *res;
+		int  rc = sqlite3_prepare_v2(db, query.c_str(), -1, &res, 0);
+		throwSQLiteException(rc);
+		return res;
+	}
 
 	void createInsertOrUpdate(std::string query);
 

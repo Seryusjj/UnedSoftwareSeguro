@@ -3,15 +3,61 @@
 #include "NetworkingFactory.h"
 #include "ConfigurationManager.h"
 #include "DbConnection.h"
+#include "UserGateway.h"
+#include "OperationCodes.h"
+#include <chrono>
+#include <thread>
 
 using namespace std;
 std::map<int, User*> connected;
+std::map<int, bool> loggedIn;
 
-void createDb(DbConnection& connection)
-{
-	connection.open();
-	connection.createInsertOrUpdate("CREATE TABLE users (username STRING PRIMARY KEY, pass STRING);");
-	connection.close();
+void loginOrCreate(std::map<int, User*>& result, UserGateway& usersGateway, ServerConnection* socketConnection) {
+	//login + create user
+	for each (auto pair in result)
+	{
+		//log in
+		if (pair.second->Id == LOGIN)
+		{
+			User* res = usersGateway.getUserByUserAndPass(pair.second->getUserName(), pair.second->getPass());
+			if (res == nullptr)
+			{
+				pair.second->Id = LOGIN_ERROR;
+				socketConnection->sendIntFrom(LOGIN_ERROR, pair.first);
+				delete pair.second;
+			}
+			else
+			{
+				socketConnection->sendFrom(res->serialize(), res->serializeSize(), pair.first);
+				delete result[pair.first];
+				result[pair.first] = res;
+			}
+		}//create user
+		else if (pair.second->Id == CREATEUSER)
+		{
+			User* res = usersGateway.getUserByUserName(pair.second->getUserName());
+			if (res == nullptr)
+			{
+				usersGateway.createNewUser(pair.second);
+				socketConnection->sendFrom(pair.second->serialize(), pair.second->serializeSize(), pair.first);
+			}
+			else
+			{
+				pair.second->Id = CREATEUSER_ERROR;
+				socketConnection->sendFrom(pair.second->serialize(), pair.second->serializeSize(), pair.first);
+				delete pair.second;
+			}
+		}
+	}
+}
+void copyUser(User* dest, User* source) {
+	dest->Id = source->Id;
+	dest->X = source->X;
+	dest->Y = source->Y;
+	dest->Z = source->Z;
+	dest->setMessage((char*)source->getMessage());
+	dest->setPassword((char*)source->getPass().c_str());
+	dest->setUsername((char*)source->getUserName().c_str());
 }
 
 int main(void)
@@ -26,35 +72,47 @@ int main(void)
 	DbConnection dbConnection = DbConnection(dbName);
 	socketConnection->open();
 	dbConnection.open();
+	UserGateway usersGateway(dbConnection);
+	usersGateway.CreateUsersTable();
 	while (true)
 	{
 		//leemos datos de todos los usuarios conectados
-		auto result = socketConnection->readAsync<User>();
-		for each (auto pair in result)
+		auto ready = socketConnection->readAsync<User>();
+
+		loginOrCreate(ready, usersGateway, socketConnection);
+		for each (auto pair in ready)
 		{
-			connected[pair.first] = pair.second;
+			if (pair.second->Id >= 0) {
+				if (connected[pair.second->Id] != NULL)
+					copyUser(connected[pair.second->Id], pair.second);
+				else {
+					connected[pair.second->Id] = new User();
+					copyUser(connected[pair.second->Id], pair.second);
+				}
+			}
 		}
-
-		//verificamos que estan logueados #thread 1
-		//id!=-1 si no estan logueados los mandamos a login si no continuamos
-
+		//send data to everybody
 		//onece the user is logged in, just send it's data to to other players and vice versa #thread 2
-		for each (auto pair in connected)
+		int totalUsers = connected.size() - 1;//all the users - the one who is requesting the data
+		for each (auto pair in ready)
 		{
 			//send the user the number of users connected != from current
-			socketConnection->sendIntFrom(result.size() - 1, pair.first);
+			socketConnection->sendIntFrom(totalUsers, pair.first);
 		}
-		/** If a client does not end precessing data, its not going to send anything that is, is not going to be on the result ***/
-		/** If a user disconnect from server is not going to be on result map anymore but is going to be on clients list so we have to tell**/
-		/** The client withc users are still connected **/
-		//send to each user ther others user data in another thread
-		for each (auto pair in connected)
+		//make the thread wait 1s for the last sended item to be received on target client
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		//send client data to each other clients and vice versa
+		for each (auto pair in ready)
 		{
 			for each (auto pairTwo in connected)
 			{
 				//do not send user a it's own data
-				if (pair.first != pairTwo.first)
+				if (pair.second->Id != pairTwo.second->Id) {
 					socketConnection->sendFrom(pairTwo.second->serialize(), pairTwo.second->serializeSize(), pair.first);
+					while (socketConnection->readBlockingIntDataFrom(pair.first) != -15) {
+						//wait for response
+					}
+				}
 			}
 		}
 	}

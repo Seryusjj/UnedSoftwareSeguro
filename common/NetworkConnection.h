@@ -62,12 +62,12 @@ public:
 	T*  readBlocking() {
 		char buffer[MAX_BUFFER_SIZE];
 		int rc = recv(_socket, buffer, MAX_BUFFER_SIZE, 0);
-		T *s = new T();
-		s->deserialize(buffer);
+		T *s = new T();		s->deserialize(buffer);
 		return s;
 	}
 
 	inline int32_t  readBlockingIntData();
+	inline int32_t  readBlockingIntDataFrom(int socket);
 
 	inline int32_t  readBlockingFloatData();
 
@@ -80,7 +80,7 @@ public:
 
 	inline bool sendFloatFrom(float data, int socket);
 
-	inline bool sendIntData(const int32_t data, int len);
+	inline bool sendIntData(int32_t data);
 
-	inline bool sendFloatData(const float data, int len);
+	inline bool sendFloatData(const float data);
 };

@@ -6,7 +6,7 @@
 template <typename T> class SerializablePOD
 {
 public:
-	static int32_t serializeSize(T str)
+	static int32_t serializeSize(const T str)
 	{
 		return sizeof(T);
 	}

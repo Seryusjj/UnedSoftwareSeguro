@@ -1,8 +1,6 @@
 #pragma once
 #include "DbConnection.h"
 
-#include "sqlite3.h"
-
 void DbConnection::open()
 {
 	rc = sqlite3_open(dbName.c_str(), &db);
@@ -26,10 +24,10 @@ DbConnection::executeQuery(std::string query)
 	for (int i = 0; i < columns; i++)
 	{
 		std::vector<std::string> rowResults;
-		for (int j = 0; j <= rows; j++)
+		for (int j = 0; j < rows; j++)
 		{
 			int cellPosition = (j * columns) + i;
-			if (cellPosition >= columns)
+			if (cellPosition > columns)
 			{
 				rowResults.push_back(results[cellPosition]);
 			}
@@ -89,14 +87,4 @@ void DbConnection::printTable(std::map<std::string, std::vector<std::string>> & 
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
-}
-
-void DbConnection::throwSQLiteException(int excep)
-{
-	if (excep)
-	{
-		std::exception excepcionToThrow = std::exception(sqlite3_errmsg(db));
-		sqlite3_free(error);
-		throw  excepcionToThrow;
-	}
 }
